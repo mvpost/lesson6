@@ -1,4 +1,4 @@
-public class CreateAnimalServiceImpl extends CreateAnimalService {
+public class CreateAnimalServiceImpl implements CreateAnimalService {
     public void createAnimals(int N) {
         System.out.println("Create Animal with cycle for:");
         for (int i = 0; i < N; i++) {
@@ -15,7 +15,6 @@ public class CreateAnimalServiceImpl extends CreateAnimalService {
         }
     }
 
-    @Override
     public void createAnimals() {
         byte count = 0;
         System.out.println("Create Animal with cycle do-while:");
