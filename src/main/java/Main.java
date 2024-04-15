@@ -1,12 +1,11 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args){
         AnimalRepositoryImpl animalRepositoryImpl = new AnimalRepositoryImpl();
 
-        ArrayList<Animal> animals = (ArrayList<Animal>) fillAnimalsList();
+        ArrayList<Animal> animals = fillAnimalsList();
 
         System.out.println("Животные, родившиеся в високосный год: \n"
                 + animalRepositoryImpl.findLeapYearNames(animals));
@@ -18,7 +17,7 @@ public class Main {
                 + animalRepositoryImpl.findDuplicate(animals));
     }
 
-    private static List<Animal> fillAnimalsList() {
+    private static ArrayList<Animal> fillAnimalsList() {
         ArrayList<Animal> animals = new ArrayList<>();
 
         Cat cat1 = new Cat();
