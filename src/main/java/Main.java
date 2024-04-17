@@ -1,5 +1,11 @@
+import model.Cat;
+import model.Dog;
+import repository.Animal;
+import repository.AnimalRepositoryImpl;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args){
@@ -11,7 +17,8 @@ public class Main {
                 + animalRepositoryImpl.findLeapYearNames(animals));
 
         System.out.println("Старшее животное: \n"
-                + animalRepositoryImpl.findOlderAnimal(animals, 20));
+                + animalRepositoryImpl.findOlderAnimal(animals, 0));
+        System.out.println(animalRepositoryImpl.findOlderAnimal(animals, 0).size());
 
         System.out.println("Дубликаты животных: \n"
                 + animalRepositoryImpl.findDuplicate(animals));

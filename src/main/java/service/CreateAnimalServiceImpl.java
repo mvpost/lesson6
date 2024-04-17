@@ -1,6 +1,17 @@
+package service;
+
+import model.Cat;
+import model.Dog;
+import model.Shark;
+import model.Wolf;
+import repository.Animal;
+import service.CreateAnimalService;
+
+import java.time.LocalDate;
+
 public class CreateAnimalServiceImpl implements CreateAnimalService {
     public void createAnimals(int N) {
-        System.out.println("Create Animal with cycle for:");
+        System.out.println("Create repository.Animal with cycle for:");
         for (int i = 0; i < N; i++) {
             Animal animal;
             byte remainder = (byte) (i % 4);
@@ -17,7 +28,7 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
 
     public void createAnimals() {
         byte count = 0;
-        System.out.println("Create Animal with cycle do-while:");
+        System.out.println("Create repository.Animal with cycle do-while:");
 
         do {
             Animal animal;

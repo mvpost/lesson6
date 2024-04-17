@@ -1,12 +1,25 @@
+import model.Cat;
+import model.Dog;
 import org.junit.jupiter.api.Test;
+import repository.Animal;
+import repository.AnimalRepositoryImpl;
+
 import java.time.LocalDate;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 class AnimalRepositoryImplTest {
+
+    private final AnimalRepositoryImpl animalRepository;
+    private final List<Animal> animals;
+
+    public AnimalRepositoryImplTest() {
+        animalRepository = new AnimalRepositoryImpl();
+        animals = setUp();
+    }
 
     public static ArrayList<Animal> setUp() {
         ArrayList<Animal> animals = new ArrayList<>();
@@ -37,8 +50,6 @@ class AnimalRepositoryImplTest {
 
     @Test
     void findLeapYearNames() {
-        AnimalRepositoryImpl animalRepository = new AnimalRepositoryImpl();
-        List<Animal> animals = setUp();
         Map<String, LocalDate> leapYearNames = animalRepository.findLeapYearNames(animals);
 
         assertEquals(1, leapYearNames.size());
@@ -48,39 +59,30 @@ class AnimalRepositoryImplTest {
 
     @Test
     void findOlderAnimal() {
-        AnimalRepositoryImpl animalRepository = new AnimalRepositoryImpl();
-        List<Animal> animals = setUp();
-        AbstractMap<String, Integer> leapYearNames = animalRepository.findOlderAnimal(animals, 5);
+        Map<String, Integer> olderAnimals = animalRepository.findOlderAnimal(animals, 5);
 
-        assertEquals(1, leapYearNames.size());
-        assertTrue(leapYearNames.containsKey("Dog Muhtar"));
+        assertEquals(1, olderAnimals.size());
+        assertTrue(olderAnimals.containsKey("Dog Muhtar"));
     }
 
     @Test
     void findOlderAnimalWithBigAge() {
-        AnimalRepositoryImpl animalRepository = new AnimalRepositoryImpl();
-        List<Animal> animals = setUp();
-        AbstractMap<String, Integer> leapYearNames = animalRepository.findOlderAnimal(animals, 10);
+        Map<String, Integer> olderAnimals = animalRepository.findOlderAnimal(animals, 10);
 
-        assertEquals(1, leapYearNames.size());
-        assertTrue(leapYearNames.containsKey("Dog Muhtar"));
+        assertEquals(1, olderAnimals.size());
+        assertTrue(olderAnimals.containsKey("Dog Muhtar"));
     }
 
     @Test
     void findOlderAnimalWithZeroAge() {
-        AnimalRepositoryImpl animalRepository = new AnimalRepositoryImpl();
-        List<Animal> animals = setUp();
-        AbstractMap<String, Integer> leapYearNames = animalRepository.findOlderAnimal(animals, 10);
+        Map<String, Integer> olderAnimals = animalRepository.findOlderAnimal(animals, 0);
 
-        assertEquals(1, leapYearNames.size());
-        assertTrue(leapYearNames.containsKey("Dog Muhtar"));
+        assertEquals(4, olderAnimals.size());
     }
 
     @Test
     void findDuplicate() {
-        AnimalRepositoryImpl animalRepository = new AnimalRepositoryImpl();
-        List<Animal> animals = setUp();
-        AbstractMap<String, Integer> duplicateAnimals = animalRepository.findDuplicate(animals);
+        Map<String, Integer> duplicateAnimals = animalRepository.findDuplicate(animals);
 
         assertEquals(2, duplicateAnimals.size());
         assertTrue(duplicateAnimals.containsKey("Cat"));
