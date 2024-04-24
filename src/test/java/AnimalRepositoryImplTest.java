@@ -82,12 +82,10 @@ class AnimalRepositoryImplTest {
 
     @Test
     void findDuplicate() {
-        Map<String, Integer> duplicateAnimals = animalRepository.findDuplicate(animals);
+        Map<String,List<Animal>> duplicateAnimals = animalRepository.findDuplicate(animals);
 
         assertEquals(2, duplicateAnimals.size());
         assertTrue(duplicateAnimals.containsKey("Cat"));
         assertTrue(duplicateAnimals.containsKey("Dog"));
-        assertEquals(2, duplicateAnimals.get("Cat"));
-        assertEquals(2, duplicateAnimals.get("Dog"));
     }
 }

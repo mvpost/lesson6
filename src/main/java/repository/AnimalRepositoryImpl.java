@@ -2,61 +2,89 @@ package repository;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.SubmissionPublisher;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AnimalRepositoryImpl implements AnimalRepository {
     CheckLeapYearAnimalImpl checkLeapYearAnimalImpl = new CheckLeapYearAnimalImpl();
 
-    public Map<String, LocalDate> findLeapYearNames (List<Animal> animals) {
-        Map<String, LocalDate> animalsMap = new HashMap<>();
-
-        for (Animal animal : animals) {
-            if (checkLeapYearAnimalImpl.checkLeapYearAnimal(animal)) {
-                animalsMap.put(animal.getClass().getSimpleName() + " " + animal.getName(), animal.getBirthDate());
-            }
-        }
-
-        return animalsMap;
+    @Override
+    public Map<String, LocalDate> findLeapYearNames(List<Animal> animals) {
+        return animals.stream()
+                .filter(animal -> checkLeapYearAnimalImpl.checkLeapYearAnimal(animal))
+                .collect(Collectors.toMap(animal -> animal.getClass().getSimpleName() + " " + animal.getName(), Animal::getBirthDate));
     }
 
-    public Map<String, Integer> findOlderAnimal(List<Animal> animals, Integer years) {
-        Map<String, Integer> animalsMap = new HashMap<>();
-        int maxAge = 0;
+    @Override
+    public Map<String, Integer> findOlderAnimal(List<Animal> animals, Integer age) {
+        int maxAge = animals.stream()
+                .map(animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears())
+                .max(Integer::compare)
+                .orElse(0);
 
-        for (Animal animal : animals) {
-            int age = Period.between(animal.getBirthDate(), LocalDate.now()).getYears();
-            maxAge = Math.max(age, maxAge);
+        Map<String, Integer> olderAnimal =
+                animals.stream()
+                .filter(animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears() >= age)
+                .collect(Collectors.toMap(animal -> animal.getClass().getSimpleName() + " " + animal.getName(),
+                        animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears()));
 
-            if (age >= years) {
-                if (age > maxAge) {
-                    animalsMap.clear();
-                }
-                animalsMap.put(animal.getClass().getSimpleName() + " " + animal.getName(), age);
-            }
+        if (olderAnimal.size() == 0) {
+            olderAnimal =
+                animals.stream()
+                .filter(animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears() == maxAge)
+                .collect(Collectors.toMap(animal -> animal.getClass().getSimpleName() + " " + animal.getName(),
+                animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears()));
         }
 
-        if (animalsMap.isEmpty() && maxAge > 0) {
-            for (Animal animal : animals) {
-                int age = Period.between(animal.getBirthDate(), LocalDate.now()).getYears();
-                if (age == maxAge) {
-                    animalsMap.put(animal.getClass().getSimpleName() + " " + animal.getName(), age);
-                }
-            }
-        }
-
-        return animalsMap;
+        return olderAnimal;
     }
 
-    public Map<String, Integer> findDuplicate(List<Animal> animals) {
-        Map<String, Integer> animalCountMap = new HashMap<>();
+    @Override
+    public Map<String, List<Animal>> findDuplicate(List<Animal> animals) {
+        return animals.stream()
+                .collect(Collectors.groupingBy(animal -> animal.getClass().getSimpleName(),
+                        Collectors.toList()))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().size() > 1)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
 
-        for (Animal animal : animals) {
-            String animalType = animal.getClass().getSimpleName();
-            animalCountMap.put(animalType, animalCountMap.getOrDefault(animalType, 0) + 1);
-        }
+    @Override
+    public double findAverageAge(List<Animal> animals) {
+        return animals.stream()
+                .mapToLong(animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears())
+                .average()
+                .orElse(0.0);
+    }
 
-        return animalCountMap;
+    @Override
+    public List<String> findOldAndExpensive(List<Animal> animals) {
+        double averagePrice = animals.stream()
+                .mapToDouble(Animal::getCost)
+                .average()
+                .orElse(0.0);
+
+        return animals.stream()
+                .filter(animal -> Period.between(animal.getBirthDate(), LocalDate.now()).getYears() > 5)
+                .filter(animal -> animal.getCost() > averagePrice)
+                .sorted(Comparator.comparing(Animal::getBirthDate))
+                .map(animal -> animal.getClass().getSimpleName() + " "
+                        + animal.getName() + " " + animal.getBirthDate())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> findMinCostAnimals(List<Animal> animals) {
+        return animals.stream()
+                .sorted(Comparator.comparingDouble(Animal::getCost))
+                .limit(3)
+                .map(Animal::getName)
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
     }
 }
