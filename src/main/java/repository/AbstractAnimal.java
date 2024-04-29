@@ -1,11 +1,15 @@
+package repository;
+
+import repository.Animal;
+
 import java.time.LocalDate;
 
 public abstract class AbstractAnimal implements Animal {
-    protected String breed;
-    protected String name;
-    protected Double cost;
-    protected String character;
-    protected LocalDate birthDate;
+    public String breed;
+    public String name;
+    public Double cost;
+    public String character;
+    public LocalDate birthDate;
 
     @Override
     public String getBreed() {
